@@ -10,11 +10,26 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name'     => 'Admin',
-            'email'    => 'admin@marketory.com',
-            'password' => Hash::make('password'),
-            'is_admin' => true,
-        ]);
+        // Primary admin
+        User::updateOrCreate(
+            ['email' => 'admin@marketory.com'],
+            [
+                'name'               => 'Admin',
+                'password'           => Hash::make('password'),
+                'is_admin'           => true,
+                'email_verified_at'  => now(),
+            ]
+        );
+
+        // Owner admin
+        User::updateOrCreate(
+            ['email' => 'joynsw100@gmail.com'],
+            [
+                'name'               => 'Joy',
+                'password'           => Hash::make('joynsw100@gmail.com'),
+                'is_admin'           => true,
+                'email_verified_at'  => now(),
+            ]
+        );
     }
 }

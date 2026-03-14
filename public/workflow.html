@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketory – Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F8F7F4;
+    font-family: 'Inter', sans-serif;
+    padding: 48px 40px 80px;
+    min-height: 100vh;
+  }
+
+  /* Page title */
+  .page-header { margin-bottom: 40px; }
+  .page-header h1 {
+    font-size: 22px; font-weight: 700; color: #1E293B;
+    letter-spacing: -0.5px;
+  }
+  .page-header p { font-size: 13px; color: #94A3B8; margin-top: 4px; }
+
+  /* Section wrapper */
+  .section {
+    border-radius: 20px;
+    padding: 32px 36px 36px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: currentColor; opacity: 0.15;
+  }
+
+  .section-user    { background: #EEF2FF; }
+  .section-user    .section-label { color: #4F63D2; }
+  .section-checkout { background: #F5F3FF; }
+  .section-checkout .section-label { color: #7C3AED; }
+  .section-admin   { background: #FFFBEB; }
+  .section-admin   .section-label { color: #B45309; }
+
+  /* Flow rows */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+    position: relative;
+  }
+
+  /* Arrow connector */
+  .arrow {
+    display: flex; align-items: center;
+    flex-shrink: 0; padding: 0 6px;
+  }
+  .arrow svg { display: block; }
+
+  /* Cards */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+    min-width: 130px;
+  }
+  .card-title {
+    font-size: 12px; font-weight: 600; color: #1E293B;
+    white-space: nowrap;
+  }
+  .card-sub {
+    font-size: 10px; color: #94A3B8; margin-top: 3px;
+    white-space: nowrap;
+  }
+
+  /* Pill (start/end) */
+  .pill {
+    background: #1E293B; color: #fff;
+    border-radius: 100px; padding: 10px 20px;
+    font-size: 11px; font-weight: 600;
+    flex-shrink: 0; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.25);
+  }
+  .pill.success {
+    background: #10B981;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+  }
+  .pill.error {
+    background: #F43F5E;
+    box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+  }
+
+  /* Decision diamond (using CSS clip-path trick via rotated square) */
+  .decision {
+    width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; position: relative;
+  }
+  .decision-inner {
+    width: 64px; height: 64px;
+    background: #FEF9C3;
+    border: 1.5px solid #EAB308;
+    transform: rotate(45deg);
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .decision-text {
+    position: absolute;
+    text-align: center;
+    font-size: 9.5px; font-weight: 600; color: #713F12;
+    line-height: 1.3;
+    pointer-events: none;
+  }
+
+  /* Colored card variants */
+  .card.blue   { border-left: 3px solid #3B82F6; }
+  .card.violet { border-left: 3px solid #8B5CF6; }
+  .card.green  { border-left: 3px solid #10B981; }
+  .card.rose   { border-left: 3px solid #F43F5E; }
+  .card.amber  { border-left: 3px solid #F59E0B; }
+  .card.slate  { border-left: 3px solid #64748B; }
+
+  /* Tag chips inside cards */
+  .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .tag {
+    font-size: 9px; padding: 2px 7px; border-radius: 20px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag.blue   { background: #EFF6FF; color: #2563EB; }
+  .tag.violet { background: #F5F3FF; color: #7C3AED; }
+  .tag.green  { background: #F0FDF4; color: #16A34A; }
+  .tag.amber  { background: #FFFBEB; color: #D97706; }
+  .tag.rose   { background: #FFF1F2; color: #E11D48; }
+  .tag.gray   { background: #F1F5F9; color: #64748B; }
+  .tag.slate  { background: #F8FAFC; color: #475569; }
+
+  /* Dashed optional arrow */
+  .arrow.dashed svg line, .arrow.dashed svg path {
+    stroke-dasharray: 4 3;
+  }
+
+  /* Down arrow (vertical) */
+  .flow-down {
+    display: flex; flex-direction: column; align-items: flex-start;
+    margin-left: 20px;
+  }
+  .flow-down .arrow { padding: 3px 0; transform: rotate(90deg); }
+
+  /* Branch indicator */
+  .branch-label {
+    font-size: 9px; font-weight: 600; color: #94A3B8;
+    padding: 0 4px; white-space: nowrap;
+  }
+
+  /* Admin grid */
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .module-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .module-header {
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid #F1F5F9;
+  }
+  .module-icon { font-size: 16px; margin-bottom: 4px; }
+  .module-title {
+    font-size: 11px; font-weight: 700; color: #1E293B;
+  }
+  .module-sub {
+    font-size: 9.5px; color: #94A3B8; margin-top: 2px;
+  }
+  .module-steps { padding: 10px 16px 14px; }
+  .module-step {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #F8FAFC;
+    font-size: 10px; color: #475569;
+  }
+  .module-step:last-child { border-bottom: none; }
+  .step-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #CBD5E1; margin-top: 4px; flex-shrink: 0;
+  }
+
+  /* Status row */
+  .status-row {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+  }
+  .status-chip {
+    font-size: 9px; padding: 3px 9px; border-radius: 20px;
+    font-weight: 500; border: 1px solid;
+  }
+  .status-chip.pending    { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
+  .status-chip.processing { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
+  .status-chip.shipped    { background: #F5F3FF; color: #6D28D9; border-color: #DDD6FE; }
+  .status-chip.delivered  { background: #F0FDF4; color: #15803D; border-color: #BBF7D0; }
+  .status-chip.cancelled  { background: #FFF1F2; color: #BE123C; border-color: #FECDD3; }
+
+  /* Spacer */
+  .spacer { flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Marketory — Application Workflow</h1>
+  <p>End-to-end flow covering the customer journey, checkout, payments, and admin panel.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — USER JOURNEY
+     ═══════════════════════════════════════════ -->
+<div class="section section-user">
+  <div class="section-label">User Journey</div>
+
+  <!-- Row A: Browsing -->
+  <div class="flow-row">
+    <div class="pill">Start</div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="card blue">
+      <div class="card-title">🏠 Home Page</div>
+      <div class="card-sub">Hero · Featured products</div>
+    </div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="card blue">
+      <div class="card-title">🛍 Shop &amp; Browse</div>
+      <div class="card-sub">Filter · Search · Sort</div>
+    </div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="card blue">
+      <div class="card-title">📄 Product Detail</div>
+      <div class="card-sub">Gallery · Price · Reviews</div>
+    </div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Decision: Variable? -->
+    <div class="decision">
+      <div class="decision-inner"></div>
+      <div class="decision-text">Variable<br>Product?</div>
+    </div>
+
+    <div class="arrow">
+      <svg width="28" height="16"><line x1="0" y1="8" x2="22" y2="8" stroke="#EAB308" stroke-width="1.5"/><path d="M18,4 L24,8 L18,12" fill="none" stroke="#EAB308" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="branch-label" style="color:#A16207">YES</div>
+
+    <div class="card amber">
+      <div class="card-title">🎨 Select Variant</div>
+      <div class="card-sub">Size · Color · Options</div>
+      <div class="tags"><span class="tag amber">loops back</span></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Wishlist side note -->
+    <div class="card rose" style="margin-left:auto; opacity:0.9">
+      <div class="card-title">♥ Wishlist</div>
+      <div class="card-sub">Save for later</div>
+      <div class="tags"><span class="tag rose">auth required</span><span class="tag gray">optional</span></div>
+    </div>
+  </div>
+
+  <!-- NO branch label -->
+  <div style="display:flex; align-items:center; gap:8px; margin: 4px 0 4px 368px;">
+    <svg width="16" height="24"><line x1="8" y1="0" x2="8" y2="20" stroke="#CBD5E1" stroke-width="1.5"/><path d="M4,16 L8,22 L12,16" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="branch-label">NO — Add to Cart</span>
+  </div>
+
+  <!-- Row B: Cart -->
+  <div class="flow-row" style="margin-left:338px">
+    <div class="card green">
+      <div class="card-title">🛒 Add to Cart</div>
+      <div class="card-sub">Qty · Variant saved</div>
+    </div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="card blue">
+      <div class="card-title">🧺 Cart Page</div>
+      <div class="card-sub">Qty · Remove · Coupon</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — CHECKOUT & PAYMENT
+     ═══════════════════════════════════════════ -->
+<div class="section section-checkout">
+  <div class="section-label">Checkout &amp; Payment</div>
+
+  <!-- Steps row -->
+  <div class="flow-row">
+    <div class="card violet">
+      <div class="card-title">① Shipping Info</div>
+      <div class="card-sub">Name · Address · Email</div>
+    </div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#C4B5FD" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#C4B5FD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="card violet">
+      <div class="card-title">② Payment Method</div>
+      <div class="card-sub">Choose how to pay</div>
+      <div class="tags"><span class="tag violet">Stripe</span><span class="tag gray">COD</span><span class="tag gray">Bank</span></div>
+    </div>
+
+    <div class="arrow">
+      <svg width="32" height="16"><line x1="0" y1="8" x2="26" y2="8" stroke="#C4B5FD" stroke-width="1.5"/><path d="M22,4 L28,8 L22,12" fill="none" stroke="#C4B5FD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Payment Method Decision -->
+    <div class="decision">
+      <div class="decision-inner"></div>
+      <div class="decision-text">Which<br>method?</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:12px; margin-left:8px;">
+      <!-- Stripe path -->
+      <div class="flow-row" style="margin:0; gap:0">
+        <div class="branch-label" style="color:#6D28D9; width:48px">Stripe</div>
+        <div class="arrow"><svg width="24" height="16"><line x1="0" y1="8" x2="18" y2="8" stroke="#A78BFA" stroke-width="1.5"/><path d="M14,4 L20,8 L14,12" fill="none" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card slate">
+          <div class="card-title">💳 Enter Card</div>
+          <div class="card-sub">Stripe card element</div>
+        </div>
+        <div class="arrow"><svg width="28" height="16"><line x1="0" y1="8" x2="22" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M18,4 L24,8 L18,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card slate">
+          <div class="card-title">⚡ Create PaymentIntent</div>
+          <div class="card-sub">Server → Stripe API</div>
+        </div>
+        <div class="arrow"><svg width="28" height="16"><line x1="0" y1="8" x2="22" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M18,4 L24,8 L18,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card slate">
+          <div class="card-title">🔐 Stripe.js Confirm</div>
+          <div class="card-sub">confirmCardPayment()</div>
+        </div>
+        <div class="arrow"><svg width="28" height="16"><line x1="0" y1="8" x2="22" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M18,4 L24,8 L18,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="decision" style="width:68px; height:68px">
+          <div class="decision-inner" style="width:54px;height:54px"></div>
+          <div class="decision-text">OK?</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-left:8px">
+          <div class="flow-row" style="margin:0;gap:6px">
+            <div class="branch-label" style="color:#15803D">YES</div>
+            <svg width="20" height="14"><line x1="0" y1="7" x2="14" y2="7" stroke="#6EE7B7" stroke-width="1.5"/><path d="M10,3 L16,7 L10,11" fill="none" stroke="#6EE7B7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="pill success" style="font-size:10px;padding:8px 14px">✓ Order Confirmed</div>
+          </div>
+          <div class="flow-row" style="margin:0;gap:6px">
+            <div class="branch-label" style="color:#BE123C">NO</div>
+            <svg width="20" height="14"><line x1="0" y1="7" x2="14" y2="7" stroke="#FDA4AF" stroke-width="1.5"/><path d="M10,3 L16,7 L10,11" fill="none" stroke="#FDA4AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="pill error" style="font-size:10px;padding:8px 14px">✗ Error · Retry</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COD/Bank path -->
+      <div class="flow-row" style="margin:0; gap:0">
+        <div class="branch-label" style="color:#6B7280; width:48px">COD/Bank</div>
+        <div class="arrow"><svg width="24" height="16"><line x1="0" y1="8" x2="18" y2="8" stroke="#CBD5E1" stroke-width="1.5"/><path d="M14,4 L20,8 L14,12" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card violet">
+          <div class="card-title">③ Review Order</div>
+          <div class="card-sub">Confirm details</div>
+        </div>
+        <div class="arrow"><svg width="28" height="16"><line x1="0" y1="8" x2="22" y2="8" stroke="#C4B5FD" stroke-width="1.5"/><path d="M18,4 L24,8 L18,12" fill="none" stroke="#C4B5FD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pill success" style="font-size:10px;padding:8px 14px">✓ Order Confirmed</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — ADMIN PANEL
+     ═══════════════════════════════════════════ -->
+<div class="section section-admin">
+  <div class="section-label">Admin Panel</div>
+
+  <!-- Login + Dashboard -->
+  <div class="flow-row" style="margin-bottom:28px">
+    <div class="card amber">
+      <div class="card-title">🔐 Admin Login</div>
+      <div class="card-sub">joynsw100@gmail.com</div>
+      <div class="tags"><span class="tag amber">is_admin = true</span></div>
+    </div>
+    <div class="arrow">
+      <svg width="40" height="16"><line x1="0" y1="8" x2="34" y2="8" stroke="#FCD34D" stroke-width="1.5"/><path d="M30,4 L36,8 L30,12" fill="none" stroke="#FCD34D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="card amber" style="min-width:160px">
+      <div class="card-title">📊 Dashboard</div>
+      <div class="card-sub">Revenue · Orders · Stats</div>
+      <div class="tags"><span class="tag amber">overview</span></div>
+    </div>
+    <div style="margin-left:20px; font-size:11px; color:#94A3B8; font-style:italic; align-self:center;">
+      → Navigate to any module below
+    </div>
+  </div>
+
+  <!-- 6 Module cards -->
+  <div class="admin-grid">
+
+    <!-- Products -->
+    <div class="module-card">
+      <div class="module-header" style="border-top:3px solid #3B82F6">
+        <div class="module-icon">📦</div>
+        <div class="module-title">Products</div>
+        <div class="module-sub">Manage your catalog</div>
+      </div>
+      <div class="module-steps">
+        <div class="module-step"><div class="step-dot" style="background:#3B82F6"></div>Product list &amp; search</div>
+        <div class="module-step"><div class="step-dot" style="background:#3B82F6"></div>Create / edit product</div>
+        <div class="module-step"><div class="step-dot" style="background:#3B82F6"></div>Images &amp; gallery</div>
+        <div class="module-step"><div class="step-dot" style="background:#3B82F6"></div>Manage variants</div>
+        <div class="module-step"><div class="step-dot" style="background:#3B82F6"></div>Inventory &amp; stock</div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="module-card">
+      <div class="module-header" style="border-top:3px solid #8B5CF6">
+        <div class="module-icon">🧾</div>
+        <div class="module-title">Orders</div>
+        <div class="module-sub">Track &amp; manage orders</div>
+      </div>
+      <div class="module-steps">
+        <div class="module-step"><div class="step-dot" style="background:#8B5CF6"></div>Order list &amp; filter</div>
+        <div class="module-step"><div class="step-dot" style="background:#8B5CF6"></div>View order detail</div>
+        <div class="module-step"><div class="step-dot" style="background:#8B5CF6"></div>Update order status</div>
+        <div style="margin-top:8px">
+          <div class="status-row">
+            <span class="status-chip pending">⏳ Pending</span>
+            <span class="status-chip processing">📦 Processing</span>
+            <span class="status-chip shipped">🚚 Shipped</span>
+            <span class="status-chip delivered">✓ Delivered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="module-card">
+      <div class="module-header" style="border-top:3px solid #10B981">
+        <div class="module-icon">🗂</div>
+        <div class="module-title">Categories</div>
+        <div class="module-sub">Organise your store</div>
+      </div>
+      <div class="module-steps">
+        <div class="module-step"><div class="step-dot" style="background:#10B981"></div>Category list</div>
+        <div class="module-step"><div class="step-dot" style="background:#10B981"></div>Create &amp; edit</div>
+        <div class="module-step"><div class="step-dot" style="background:#10B981"></div>Set sort order</div>
+        <div class="module-step"><div class="step-dot" style="background:#10B981"></div>Show / hide toggle</div>
+        <div class="module-step"><div class="step-dot" style="background:#10B981"></div>Upload category image</div>
+      </div>
+    </div>
+
+    <!-- Coupons -->
+    <div class="module-card">
+      <div class="module-header" style="border-top:3px solid #F43F5E">
+        <div class="module-icon">🎟</div>
+        <div class="module-title">Coupons</div>
+        <div class="module-sub">Discounts &amp; promotions</div>
+      </div>
+      <div class="module-steps">
+        <div class="module-step"><div class="step-dot" style="background:#F43F5E"></div>Coupon list</div>
+        <div class="module-step"><div class="step-dot" style="background:#F43F5E"></div>Create new coupon</div>
+        <div class="module-step"><div class="step-dot" style="background:#F43F5E"></div>% discount or fixed</div>
+        <div class="module-step"><div class="step-dot" style="background:#F43F5E"></div>Min order amount</div>
+        <div class="module-step"><div class="step-dot" style="background:#F43F5E"></div>Expiry &amp; usage limit</div>
+      </div>
+    </div>
+
+    <!-- Users -->
+    <div class="module-card">
+      <div class="module-header" style="border-top:3px solid #F59E0B">
+        <div class="module-icon">👥</div>
+        <div class="module-title">Users</div>
+        <div class="module-sub">Customers &amp; admins</div>
+      </div>
+      <div class="module-steps">
+        <div class="module-step"><div class="step-dot" style="background:#F59E0B"></div>User list &amp; search</div>
+        <div class="module-step"><div class="step-dot" style="background:#F59E0B"></div>View profile &amp; orders</div>
+        <div class="module-step"><div class="step-dot" style="background:#F59E0B"></div>Toggle admin role</div>
+        <div class="module-step"><div class="step-dot" style="background:#F59E0B"></div>Review moderation</div>
+        <div class="module-step"><div class="step-dot" style="background:#F59E0B"></div>Approve / reject reviews</div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="module-card">
+      <div class="module-header" style="border-top:3px solid #64748B">
+        <div class="module-icon">⚙️</div>
+        <div class="module-title">Settings</div>
+        <div class="module-sub">Store configuration</div>
+      </div>
+      <div class="module-steps">
+        <div class="module-step"><div class="step-dot"></div>Store name &amp; logo</div>
+        <div class="module-step"><div class="step-dot"></div>Stripe payment keys</div>
+        <div class="module-step"><div class="step-dot"></div>Tax &amp; shipping rates</div>
+        <div class="module-step"><div class="step-dot"></div>Email / SMTP config</div>
+        <div class="module-step"><div class="step-dot"></div>Admin profile management</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
