@@ -1,21 +1,21 @@
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 
-document.addEventListener('livewire:initialized', () => {
-    // Open cart sidebar when item added
-    Livewire.on('open-cart-sidebar', () => {
-        const el = document.getElementById('cartSidebar');
-        if (el) {
-            const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(el);
-            offcanvas.show();
-        }
-    });
+function openCartSidebar() {
+    const el = document.getElementById('cartSidebar');
+    if (el) bootstrap.Offcanvas.getOrCreateInstance(el).show();
+}
 
-    // Show toast notification
+// Livewire.on registration — works in both livewire:init and livewire:initialized
+document.addEventListener('livewire:init', () => {
+    Livewire.on('open-cart-sidebar', openCartSidebar);
     Livewire.on('show-toast', (data) => {
         showToast(data[0]?.message || data[0] || 'Done!', data[0]?.type || 'success');
     });
 });
+
+// Fallback: Livewire 3 also dispatches as window CustomEvents
+window.addEventListener('open-cart-sidebar', openCartSidebar);
 
 function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
