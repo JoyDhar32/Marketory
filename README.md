@@ -1,6 +1,7 @@
 # Marketory
 
 A full-featured e-commerce web application built with Laravel 12 and Livewire 4. Marketory covers everything you'd expect from a modern online store — product browsing, variant selection, a session-based cart, Stripe payments, order management, wishlists, coupon codes, and a complete admin panel — all without a single page reload thanks to Livewire's reactive components.
+![alt text](marketory-workflow.png)
 
 ---
 
@@ -16,15 +17,15 @@ This project started as a way to build a clean, maintainable e-commerce foundati
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| Backend | PHP 8.2 · Laravel 12 |
-| Reactive UI | Livewire 4.2 |
-| Frontend | Bootstrap 5.3 · Sass · Vite 7 |
-| Database | SQLite (default) — swap to MySQL/Postgres easily |
-| Payments | Stripe PHP SDK 19 · Stripe.js v3 |
-| Slugs | Spatie Laravel Sluggable |
-| Auth | Laravel's built-in authentication |
+| Layer       | Technology                                       |
+| ----------- | ------------------------------------------------ |
+| Backend     | PHP 8.2 · Laravel 12                             |
+| Reactive UI | Livewire 4.2                                     |
+| Frontend    | Bootstrap 5.3 · Sass · Vite 7                    |
+| Database    | SQLite (default) — swap to MySQL/Postgres easily |
+| Payments    | Stripe PHP SDK 19 · Stripe.js v3                 |
+| Slugs       | Spatie Laravel Sluggable                         |
+| Auth        | Laravel's built-in authentication                |
 
 ---
 
@@ -39,9 +40,9 @@ This project started as a way to build a clean, maintainable e-commerce foundati
 - **Slide-out cart sidebar** — opens automatically when you add something, shows a live item count badge in the navbar
 - **Wishlist** — save products for later, requires login, toggle on/off from the product detail page
 - **Three-step checkout**
-  1. Shipping info (name, address, email)
-  2. Payment method (Stripe card, cash on delivery, bank transfer)
-  3. Review and confirm
+    1. Shipping info (name, address, email)
+    2. Payment method (Stripe card, cash on delivery, bank transfer)
+    3. Review and confirm
 - **Stripe payments** — card element mounts on step 3, creates a PaymentIntent server-side, confirms with Stripe.js, verifies server-side before creating the order
 - **Order confirmation** — unique order number, full item summary, billing details
 - **User accounts** — register, login, logout, view order history
@@ -181,10 +182,10 @@ After running `php artisan db:seed`, the following accounts are ready to use.
 
 ### Admin accounts
 
-| Name | Email | Password |
-|---|---|---|
-| Admin | admin@marketory.com | `password` |
-| Joy | joynsw100@gmail.com | `joynsw100@gmail.com` |
+| Name  | Email               | Password              |
+| ----- | ------------------- | --------------------- |
+| Admin | admin@marketory.com | `password`            |
+| Joy   | joynsw100@gmail.com | `joynsw100@gmail.com` |
 
 Log in at `/login` and you'll be redirected to `/admin/dashboard` automatically.
 
@@ -192,39 +193,39 @@ Log in at `/login` and you'll be redirected to `/admin/dashboard` automatically.
 
 All dummy customers use the password `password`.
 
-| Name | Email |
-|---|---|
+| Name          | Email             |
+| ------------- | ----------------- |
 | Alice Johnson | alice@example.com |
-| Bob Smith | bob@example.com |
-| Carol White | carol@example.com |
-| David Brown | david@example.com |
-| Emma Davis | emma@example.com |
-| Frank Miller | frank@example.com |
-| Grace Wilson | grace@example.com |
-| Henry Moore | henry@example.com |
-| Isla Taylor | isla@example.com |
-| Jack Anderson | jack@example.com |
+| Bob Smith     | bob@example.com   |
+| Carol White   | carol@example.com |
+| David Brown   | david@example.com |
+| Emma Davis    | emma@example.com  |
+| Frank Miller  | frank@example.com |
+| Grace Wilson  | grace@example.com |
+| Henry Moore   | henry@example.com |
+| Isla Taylor   | isla@example.com  |
+| Jack Anderson | jack@example.com  |
 
 ---
 
 ## Key URLs
 
-| URL | Description |
-|---|---|
-| `/` | Storefront homepage |
-| `/shop` | Product catalog with filters |
-| `/product/{slug}` | Product detail page |
-| `/cart` | Shopping cart |
-| `/checkout` | Three-step checkout |
-| `/wishlist` | Saved products (login required) |
-| `/login` | Login page for customers and admins |
-| `/register` | New customer registration |
-| `/admin` | Admin dashboard |
-| `/admin/products` | Product list and management |
-| `/admin/products/create` | Add a new product |
-| `/admin/orders` | Order list with status filters |
-| `/admin/orders/{id}` | Order detail and status update |
-| `/workflow.html` | Visual application workflow diagram |
+| URL                      | Description                         |
+| ------------------------ | ----------------------------------- |
+| `/`                      | Storefront homepage                 |
+| `/shop`                  | Product catalog with filters        |
+| `/product/{slug}`        | Product detail page                 |
+| `/cart`                  | Shopping cart                       |
+| `/checkout`              | Three-step checkout                 |
+| `/wishlist`              | Saved products (login required)     |
+| `/login`                 | Login page for customers and admins |
+| `/register`              | New customer registration           |
+| `/admin`                 | Admin dashboard                     |
+| `/admin/products`        | Product list and management         |
+| `/admin/products/create` | Add a new product                   |
+| `/admin/orders`          | Order list with status filters      |
+| `/admin/orders/{id}`     | Order detail and status update      |
+| `/workflow.html`         | Visual application workflow diagram |
 
 ---
 
@@ -232,10 +233,10 @@ All dummy customers use the password `password`.
 
 Use Stripe's test card numbers in the checkout. No real money is involved.
 
-| Scenario | Card number | Expiry | CVC |
-|---|---|---|---|
+| Scenario           | Card number           | Expiry          | CVC          |
+| ------------------ | --------------------- | --------------- | ------------ |
 | Successful payment | `4242 4242 4242 4242` | Any future date | Any 3 digits |
-| Card declined | `4000 0000 0000 0002` | Any future date | Any 3 digits |
+| Card declined      | `4000 0000 0000 0002` | Any future date | Any 3 digits |
 | Requires 3D Secure | `4000 0025 0000 3155` | Any future date | Any 3 digits |
 
 ---
